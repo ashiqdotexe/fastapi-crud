@@ -14,3 +14,8 @@ async def greet_name(name:str)->dict:
 @app.get('/greet')
 async def greet_name(name:str)->dict:
     return {"message": f"Hello {name}"}
+
+#Query and Path parameter
+@app.get('/greet/{age}')
+async def greet_name(name:str, age:int)->dict:
+    return {"message": f"Hello {name}", age: f"Your age is {age}"}
