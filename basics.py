@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 
 app = FastAPI()
 
@@ -44,3 +44,9 @@ async def read_books_by_query_path(book_author: str, subject: str):
         ):
             return_all_book.append(book)
     return return_all_book
+
+
+##Post method-->
+@app.post("/create_books")
+async def create_book(new_book=Body()):
+    Books.append(new_book)
