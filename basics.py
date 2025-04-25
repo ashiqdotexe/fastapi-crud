@@ -33,6 +33,16 @@ async def read_books_by_query(subject: str):
     return return_all_book
 
 
+# Assignment -->>
+@app.get("/books/get_author/")
+async def get_author(author: str):
+    authors = []
+    for book in Books:
+        if book.get("Author").casefold() == author.casefold():
+            authors.append(book)
+    return authors
+
+
 # Query Parameter with path parameter
 @app.get("/books/{book_author}/")
 async def read_books_by_query_path(book_author: str, subject: str):
@@ -50,3 +60,20 @@ async def read_books_by_query_path(book_author: str, subject: str):
 @app.post("/create_books")
 async def create_book(new_book=Body()):
     Books.append(new_book)
+
+
+# Put (Update) method-->
+@app.put("/books/update_books")
+async def update_book(up_book=Body()):
+    for i in range(len(Books)):
+        if Books[i].get("title").casefold() == up_book.get("title").casefold():
+            Books[i] = up_book
+
+
+# delete method
+@app.delete("/books/delete_books/{delete_book}/")
+async def delete_books(delete_book: str):
+    for i in range(len(Books)):
+        if Books[i].get("title").casefold() == delete_book.casefold():
+            Books.pop(i)
+            break
