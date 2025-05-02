@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
@@ -31,7 +32,7 @@ async def read_all():
 
 
 class BookRequest(BaseModel):
-    id: int = Field
+    id: Optional[int] = None
     title: str = Field(min_length=1, max_length=100)  # Data Validation
     rating: int = Field(gt=0, lt=6)
 
@@ -39,5 +40,14 @@ class BookRequest(BaseModel):
 @app.post("/create_book")
 async def create_new_book(book_request: BookRequest):
     new_book = Book(**book_request.model_dump())
-    Books.append(new_book)
+    Books.append(find_book_id(new_book))
     return {"message": "New Book appended successfully"}
+
+
+# Adding book in chronological book_id
+def find_book_id(book: Book):
+    if len(Books) == 0:
+        book.id = 1
+    else:
+        book.id = Books[-1].id + 1
+    return book
