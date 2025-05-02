@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -31,9 +31,9 @@ async def read_all():
 
 
 class BookRequest(BaseModel):
-    id: int
-    title: str
-    rating: int
+    id: int = Field
+    title: str = Field(min_length=1, max_length=100)  # Data Validation
+    rating: int = Field(gt=0, lt=6)
 
 
 @app.post("/create_book")
