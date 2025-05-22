@@ -41,6 +41,13 @@ class BookRequest(BaseModel):
     }
 
 
+@app.get("/readbook/{book_id}")
+async def read_book_id(book_id: int):
+    for book in Books:
+        if book.id == book_id:
+            return book
+
+
 @app.post("/create_book")
 async def create_new_book(book_request: BookRequest):
     new_book = Book(**book_request.model_dump())
