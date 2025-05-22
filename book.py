@@ -18,7 +18,7 @@ class Book:
 
 Books = [
     Book(1, "Math", 4),
-    Book(2, "Bangla", 2),
+    Book(2, "Bangla", 4),
     Book(3, "English", 3),
 ]
 
@@ -46,6 +46,15 @@ async def read_book_id(book_id: int):
     for book in Books:
         if book.id == book_id:
             return book
+
+
+@app.get("/readbook/")
+async def read_book_by_id(book_rating: int):
+    book_to_return = []
+    for book in Books:
+        if book.rating == book_rating:
+            book_to_return.append(book)
+    return book_to_return
 
 
 @app.post("/create_book")
