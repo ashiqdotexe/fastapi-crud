@@ -36,6 +36,10 @@ class BookRequest(BaseModel):
     title: str = Field(min_length=1, max_length=100)  # Data Validation
     rating: int = Field(gt=0, lt=6)
 
+    model_config = {
+        "json_schema_extra": {"example": {"title": "A new book", "rating": 5}}
+    }
+
 
 @app.post("/create_book")
 async def create_new_book(book_request: BookRequest):
