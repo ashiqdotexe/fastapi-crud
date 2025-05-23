@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query, HTTPException
 from pydantic import BaseModel, Field
 
 app = FastAPI()
@@ -52,11 +52,12 @@ async def read_book_id(book_id: int = Path(gt=0)):
     for book in Books:
         if book.id == book_id:
             return book
+    raise HTTPException(status_code=404, detail="Item not found")
 
 
 # Fetching book according to rating
 @app.get("/readbook/")
-async def read_book_by_id(book_rating: int):
+async def read_book_by_id(book_rating: int = Query(gt=0, lt=6)):
     book_to_return = []
     for book in Books:
         if book.rating == book_rating:
@@ -69,7 +70,7 @@ async def read_book_by_id(book_rating: int):
 
 # Fetching by published_date
 @app.get("/readbook/publish/")
-async def read_by_publish(published_date: int):
+async def read_by_publish(published_date: int = Query(gt=1999, lt=2031)):
     book_to_return = []
     for book in Books:
         if book.published_date == published_date:
@@ -97,17 +98,27 @@ def find_book_id(book: Book):
 # updating books using book_id
 @app.put("/readbook/update_book")
 async def update_book_by_id(book: BookRequest):
+    book_changed = False
     for i in range(len(Books)):
         if Books[i].id == book.id:
             Books[i] = book
-    return {"message": "Book updated successfully"}
+            book_changed = True
+    if not book_changed:
+        raise HTTPException(status_code=404, detail="Not such item")
+    else:
+        return {"message": "Book updated successfully"}
 
 
 # Delete book using book_id
 @app.delete("/readbook/delete_book/{book_id}")
 async def delete_book_by_id(book_id: int = Path(gt=0)):
+    book_changed = False
     for i in range(len(Books)):
         if Books[i].id == book_id:
             Books.pop(i)
+            book_changed = True
             break
-    return {"message": "Book deleted successfully"}
+    if not book_changed:
+        raise HTTPException(status_code=404, detail="Not such item")
+    else:
+        return {"message": "Book deleted successfully"}
