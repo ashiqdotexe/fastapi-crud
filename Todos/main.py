@@ -47,7 +47,7 @@ async def create_todo(db: db_dependency, todo_req: TodoRequest):
 # Update todo
 @app.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_todo(
-    db: db_dependency, todo_req: TodoRequest, todo_id: int = Path(gt=0, lt=6)
+    db: db_dependency, todo_req: TodoRequest, todo_id: int = Path(gt=0)
 ):
     new_todo = db.query(Todos).filter(Todos.id == todo_id).first()
     if new_todo is None:
@@ -57,4 +57,14 @@ async def update_todo(
     new_todo.priority = todo_req.priority
     new_todo.completed = todo_req.completed
     db.add(new_todo)
+    db.commit()
+
+
+# Delete todo
+@app.delete("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_todo(db: db_dependency, todo_id: int = Path(gt=0)):
+    new_todo = db.query(Todos).filter(Todos.id == todo_id).first()
+    if new_todo is None:
+        raise HTTPException(status_code=404, detail="no such todo")
+    db.query(Todos).filter(Todos.id == todo_id).delete()
     db.commit()
