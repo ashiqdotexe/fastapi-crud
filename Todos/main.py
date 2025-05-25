@@ -6,6 +6,7 @@ from database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from starlette import status
+from schemas import TodoRequest
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -33,3 +34,11 @@ async def read_todo_id(db: db_dependency, todo_id: int = Path(gt=0)):
     if todo_model is not None:
         return todo_model
     raise HTTPException(status_code=404, detail="No such todo id")
+
+
+# Create new ToDo list-->
+@app.post("/todo/", status_code=status.HTTP_201_CREATED)
+async def create_todo(db: db_dependency, todo_req: TodoRequest):
+    new_todo = Todos(**todo_req.model_dump())
+    db.add(new_todo)
+    db.commit()
