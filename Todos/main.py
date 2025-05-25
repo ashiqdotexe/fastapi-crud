@@ -42,3 +42,19 @@ async def create_todo(db: db_dependency, todo_req: TodoRequest):
     new_todo = Todos(**todo_req.model_dump())
     db.add(new_todo)
     db.commit()
+
+
+# Update todo
+@app.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_todo(
+    db: db_dependency, todo_req: TodoRequest, todo_id: int = Path(gt=0, lt=6)
+):
+    new_todo = db.query(Todos).filter(Todos.id == todo_id).first()
+    if new_todo is None:
+        raise HTTPException(status_code=404, detail="No such Todo")
+    new_todo.title = todo_req.title
+    new_todo.description = todo_req.description
+    new_todo.priority = todo_req.priority
+    new_todo.completed = todo_req.completed
+    db.add(new_todo)
+    db.commit()
