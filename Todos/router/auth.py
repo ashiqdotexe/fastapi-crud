@@ -41,22 +41,22 @@ SECRET_KEY = "9b43e914a1317f1cfc96aab67bf49d334c33bbf4043830ca63c2a6021c3bb4b3"
 ALGORITHM = "HS256"
 
 
-def create_access_token(user_name, id, exp_datetime: timedelta):
+def create_access_token(user_name: str, id: int, exp_datetime: timedelta):
     encode = {"sub": user_name, "id": id}
-    expires = datetime.now(timezone.utc)
+    expires = datetime.now(timezone.utc) + exp_datetime
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 # decoding
-oauth_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
-def get_current_user(token: Annotated[str, Depends(OAuth2PasswordBearer)]):
+def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        username = payload.get("sub")
-        user_id = payload.get("id")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        user_id: int = payload.get("id")
         if username is None or user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate"
