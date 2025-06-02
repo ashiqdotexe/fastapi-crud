@@ -11,6 +11,12 @@ class UserRequest(BaseModel):
     role: str
 
 
+class UserPass(BaseModel):
+    current_pass: str
+    new_pass: str
+    confirm_pass: str
+
+
 class TodoRequest(BaseModel):
     title: str = Field(min_length=2)
     description: str = Field(min_length=2)
