@@ -47,11 +47,11 @@ async def change_password(
         )
     if not bcrypt_context.verify(password_chng.current_pass, new_user.hashed_password):
         raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Invalid Password"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Password"
         )
     if password_chng.new_pass != password_chng.confirm_pass:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Please re confirm the password",
         )
     new_user.hashed_password = bcrypt_context.hash(password_chng.new_pass)
