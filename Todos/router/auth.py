@@ -89,6 +89,7 @@ async def create_user(
         hashed_password=bcrypt_context.hash(create_user_req.password),
         is_active=True,
         role=create_user_req.role,
+        phone_number=create_user_req.phone_number,
     )
     db.add(new_user)
     db.commit()
