@@ -1,12 +1,11 @@
 from fastapi import Depends, HTTPException, Path, APIRouter
-from models import Todos, Users
-from database import SessionLocal
+from ..models import Todos, Users
+from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from starlette import status
-from schemas import TodoRequest
-from router.auth import get_current_user
-from schemas import UserPass
+from ..schemas import UserPass
+from ..router.auth import get_current_user
 from passlib.context import CryptContext
 
 router = APIRouter(prefix="/users", tags=["users"])
