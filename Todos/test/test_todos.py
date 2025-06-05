@@ -1,56 +1,9 @@
-from sqlalchemy import StaticPool, create_engine, text
-from sqlalchemy.orm import sessionmaker, close_all_sessions
-from ..database import Base
-from ..main import app
 from ..router.todos import get_db, get_current_user, Todos
-from fastapi.testclient import TestClient
 from starlette import status
-import pytest
-
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-
-TestLocalSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base.metadata.create_all(bind=engine)
-
-
-def override_get_db():
-    db = TestLocalSession()
-    try:
-        yield db
-    finally:
-        close_all_sessions()
-
-
-def override_get_current_user():
-    return {"username": "sohan", "id": 1, "user_role": "admin"}
-
-
-@pytest.fixture
-def test_todo():
-    todo = Todos(
-        title="Do homework",
-        description="its important",
-        priority=5,
-        completed=False,
-        owner_id=1,
-    )
-    db = TestLocalSession()
-    db.add(todo)
-    db.commit()
-    yield todo
-    with db.connection() as connect:
-        connect.execute(text("DELETE FROM todos"))
-        connect.commit()
-
+from .utils import *
 
 app.dependency_overrides[get_db] = override_get_db
 app.dependency_overrides[get_current_user] = override_get_current_user
-client = TestClient(app)
 
 
 def test_readall_authenticate(test_todo):
