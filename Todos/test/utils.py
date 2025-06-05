@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 import pytest
 from ..router.todos import get_db, get_current_user, Todos
 from ..models import Users
+from ..router.auth import bcrypt_context
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(
@@ -56,7 +57,7 @@ def test_user():
         user_name="sohan",
         first_name="ashiqur",
         last_name="rohan",
-        hashed_password="aaaa",
+        hashed_password=bcrypt_context.hash("aaaa"),
         is_active=False,
         role="admin",
         phone_number="01727",
