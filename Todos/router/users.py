@@ -25,7 +25,7 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-@router.get("/todo", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def read_user(user: user_dependency, db: db_dependency):
     user_model = db.query(Users).filter(Users.user_name == user.get("username")).first()
     if not user_model:
@@ -35,7 +35,7 @@ async def read_user(user: user_dependency, db: db_dependency):
     return user_model
 
 
-@router.put("/todo", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/changepassword", status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(
     user: user_dependency, db: db_dependency, password_chng: UserPass
 ):
