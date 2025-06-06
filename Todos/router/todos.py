@@ -7,7 +7,7 @@ from starlette import status
 from ..schemas import TodoRequest
 from ..router.auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/todos", tags=["todos"])
 
 
 def get_db():

@@ -7,7 +7,7 @@ app.dependency_overrides[get_current_user] = override_get_current_user
 
 
 def test_readall_authenticate(test_todo):
-    response = client.get("/")
+    response = client.get("/todos")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [
         {
@@ -22,7 +22,7 @@ def test_readall_authenticate(test_todo):
 
 
 def test_read_one_authenticate(test_todo):
-    response = client.get("/todo/1")
+    response = client.get("/todos/todo/1")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "title": "Do homework",
@@ -35,7 +35,7 @@ def test_read_one_authenticate(test_todo):
 
 
 def test_read_one_not_authenticate(test_todo):
-    response = client.get("/todo/999")
+    response = client.get("/todos/todo/999")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -47,7 +47,7 @@ def test_create_authenticated(test_todo):
         "completed": False,
     }
 
-    response = client.post("/todo/", json=request_data)
+    response = client.post("/todos/todo/", json=request_data)
     assert response.status_code == status.HTTP_201_CREATED
     db = TestLocalSession()
     model = db.query(Todos).filter(Todos.id == 2).first()
@@ -64,7 +64,7 @@ def test_update_one_authenticate(test_todo):
         "priority": 2,
         "completed": False,
     }
-    response = client.put("/todo/1", json=request_data)
+    response = client.put("/todos/todo/1", json=request_data)
     assert response.status_code == status.HTTP_204_NO_CONTENT
     db = TestLocalSession()
     model = db.query(Todos).filter(Todos.id == 1).first()
@@ -78,12 +78,12 @@ def test_update_one_not_authenticate(test_todo):
         "priority": 2,
         "completed": False,
     }
-    response = client.put("/todo/999", json=request_data)
+    response = client.put("/todos/todo/999", json=request_data)
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_delete_one_authenticate(test_todo):
-    response = client.delete("/todo/1")
+    response = client.delete("/todos/todo/1")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     db = TestLocalSession()
     model = db.query(Todos).filter(Todos.id == 1).first()
