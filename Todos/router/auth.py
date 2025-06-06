@@ -30,13 +30,9 @@ bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def authenticate_user(user_name, password, db):
     user = db.query(Users).filter(Users.user_name == user_name).first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Username"
-        )
+        return False
     if not bcrypt_context.verify(password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Password"
-        )
+        return False
     return user
 
 
