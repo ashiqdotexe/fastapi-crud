@@ -9,6 +9,7 @@ from .utils import *
 from starlette import status
 from jose import jwt
 from datetime import timedelta
+import pytest_asyncio
 
 app.dependency_overrides[get_db] = get_db
 
@@ -35,3 +36,11 @@ def test_create_access_token():
     assert payload["sub"] == username
     assert payload["id"] == id
     assert payload["user_role"] == role
+
+
+@pytest.mark.asyncio
+async def test_get_current_user_valid_token():
+    encode = {"sub": "sohan", "id": 1, "user_role": "admin"}
+    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    user = await get_current_user(token=token)
+    assert user == {"username": "sohan", "id": 1, "user_role": "admin"}
