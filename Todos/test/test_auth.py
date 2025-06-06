@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from ..router.auth import (
     create_access_token,
     get_db,
@@ -44,3 +45,13 @@ async def test_get_current_user_valid_token():
     token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
     user = await get_current_user(token=token)
     assert user == {"username": "sohan", "id": 1, "user_role": "admin"}
+
+
+@pytest.mark.asyncio
+async def test_get_current_user_missing_payload():
+    encode = {"user_role": "role"}
+    token = jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    with pytest.raises(HTTPException) as excep:
+        await get_current_user(token=token)
+    assert excep.value.status_code == 401
+    assert excep.value.detail == "Could not validate"
