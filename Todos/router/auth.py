@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from starlette import status
 from ..schemas import UserRequest, Token
 from ..models import Users
@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import timedelta, datetime, timezone
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 
 def get_db():
@@ -69,6 +71,21 @@ async def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate"
         )
+
+
+templates = Jinja2Templates(directory="Todos/templates")
+
+### Pages ##
+
+
+@router.get("/login-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@router.get("/register-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
 
 
 # Endpoints
