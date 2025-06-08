@@ -1,0 +1,13 @@
+{% include 'layout.html' %}
+<div class="container">
+    <tbody>
+        {% for todo in todos %}
+        {% if todo.completed == False %}
+        <tr class="pointer">
+            <td>{{loop.index}}</td>
+            <td>{{todo.title}}</td>
+        </tr>
+        {%endif%}
+        {%endfor%}
+    </tbody>
+</div>
