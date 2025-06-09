@@ -50,6 +50,16 @@ async def todos_page(request: Request, db: db_dependency):
         return redirect_response()
 
 
+@router.get("/add-todo-page")
+async def edit_todo(request: Request):
+    user = await get_current_user(request.cookies.get("access_token"))
+    if user is None:
+        return redirect_response()
+    return template.TemplateResponse(
+        "addtodos.html", {"request": request, "user": user}
+    )
+
+
 # Endpoints
 @router.get("/")
 async def read_all(user: user_dependency, db: db_dependency):
