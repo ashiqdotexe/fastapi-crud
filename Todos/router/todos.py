@@ -51,13 +51,27 @@ async def todos_page(request: Request, db: db_dependency):
 
 
 @router.get("/add-todo-page")
-async def edit_todo(request: Request):
+async def add_todo(request: Request):
     user = await get_current_user(request.cookies.get("access_token"))
     if user is None:
         return redirect_response()
     return template.TemplateResponse(
         "addtodos.html", {"request": request, "user": user}
     )
+
+
+@router.get("/edit-todo-page/{todo_id}")
+async def edit_todo(request: Request, todo_id: int, db: db_dependency):
+    try:
+        user = await get_current_user(request.cookies.get("access_token"))
+        if user is None:
+            return redirect_response()
+        todos = db.query(Todos).filter(Todos.id == todo_id).first()
+        return template.TemplateResponse(
+            "edittodos.html", {"request": request, "user": user, "todo": todos}
+        )
+    except:
+        return redirect_response()
 
 
 # Endpoints
